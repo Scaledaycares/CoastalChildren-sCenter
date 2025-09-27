@@ -323,22 +323,40 @@ function sendToGas4(message, isUserMessage) {
         console.log("No lead found in the message; not sent to Google Sheet.");
     }
 }
- document.addEventListener('DOMContentLoaded', function() {
-    var bookingLink = document.getElementById('book-tour-link');
-    var chatbotContainer = document.getElementById('chat-widget');
-    var calendlyContainer = document.getElementById('calendly-widget-container');
-    var backButton = document.getElementById('back-to-chatbot');
-    var chatbotToggle = document.getElementById('chatbot-toggle');
+document.addEventListener('DOMContentLoaded', function() {
+      const bookingLink = document.getElementById('book-tour-link');
+      const chatbotContainer = document.getElementById('chat-widget');
+      const calendlyContainer = document.getElementById('calendly-widget-container');
+      const backButton = document.getElementById('back-to-chatbot');
+      const locationButtonsContainer = document.getElementById('location-buttons-container');
+      const locationButtons = document.querySelectorAll('.location-button');
+      const iframes = document.querySelectorAll('iframe');
 
-    bookingLink.addEventListener('click', function(event) {
+      // Show location buttons when the "Book a tour" link is clicked
+      bookingLink.addEventListener('click', function(event) {
         event.preventDefault();
-        console.log('Booking link clicked'); // Debug log
+        locationButtonsContainer.style.display = 'block';
         chatbotContainer.style.display = 'none';
-        calendlyContainer.style.display = 'block';
-    });
-backButton.addEventListener('click', function() {
+        calendlyContainer.style.display = 'none'; // Hide Calendly iframes initially
+      });
+
+      // Add event listeners to location buttons
+      locationButtons.forEach(button => {
+        button.addEventListener('click', function() {
+          const targetIframeId = button.getAttribute('data-target');
+          iframes.forEach(iframe => {
+            iframe.style.display = 'none'; // Hide all iframes
+          });
+          document.getElementById(targetIframeId).style.display = 'block'; // Show selected iframe
+          locationButtonsContainer.style.display = 'none'; // Hide location buttons
+          calendlyContainer.style.display = 'block'; // Show Calendly container
+        });
+      });
+
+      // Show chatbot and hide Calendly when the back button is clicked
+      backButton.addEventListener('click', function() {
         calendlyContainer.style.display = 'none';
-        chatbotContainer.style.display = 'flex'; // Change this to 'flex' to match your CSS
-        chatbotToggle.style.display = 'block'; // Ensure the toggle button is visible
+        chatbotContainer.style.display = 'flex'; // Show chatbot again
+        locationButtonsContainer.style.display = 'none'; // Ensure location buttons stay hidden
+      });
     });
-});
